@@ -208,6 +208,10 @@ export class SVGParser {
           logger.debug('Auto-fixed stroke-based icon: added fill="none" to elements');
         }
         
+        // Replace hardcoded stroke colors with currentColor
+        // This allows the icon to inherit color from CSS
+        fixedContent = this.replaceColorsWithCurrentColor(fixedContent);
+        
         return fixedContent;
       }
       
@@ -229,7 +233,8 @@ export class SVGParser {
         ],
       });
       
-      return result.data;
+      // Replace hardcoded colors with currentColor for fill-based icons too
+      return this.replaceColorsWithCurrentColor(result.data);
     } catch (error) {
       // If optimization fails, return original
       // This ensures we don't break valid SVGs
@@ -316,5 +321,36 @@ export class SVGParser {
     } catch (error) {
       throw new Error(`Failed to extract SVG body: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  }
+
+  /**
+   * Replace hardcoded colors with currentColor
+   * This allows the icon to inherit color from CSS
+   * 
+   * @param svgContent - SVG string with potential hardcoded colors
+   * @returns string - SVG with colors replaced by currentColor
+   */
+  private replaceColorsWithCurrentColor(svgContent: string): string {
+    let result = svgContent;
+    
+    // Replace stroke colors (but not stroke-width, stroke-linecap, etc.)
+    // Match stroke="..." where value is not "none" or "currentColor"
+    result = result.replace(
+      /stroke="(?!none|currentColor)([^"]*)"/gi,
+      'stroke="currentColor"'
+    );
+    
+    // Replace fill colors (but not fill="none")
+    // Match fill="..." where value is not "none" or "currentColor"  
+    result = result.replace(
+      /fill="(?!none|currentColor)([^"]*)"/gi,
+      'fill="currentColor"'
+    );
+    
+    if (result !== svgContent) {
+      logger.debug('Replaced hardcoded colors with currentColor');
+    }
+    
+    return result;
   }
 }

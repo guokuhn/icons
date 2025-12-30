@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DirectSvgIcon, IconInfo } from './components/DirectSvgIcon';
+import { Icon, IconInfo } from './components/DirectSvgIcon';
 
 interface IconGroup {
   groupName: string;
@@ -666,7 +666,7 @@ function App() {
                       )}
                       
                       {/* Render SVG directly from loaded data */}
-                      <DirectSvgIcon icon={icon} width={48} height={48} />
+                      <Icon icon={icon} size={48} />
                       
                       <div style={{ marginTop: '0.75rem', fontWeight: '600', fontSize: '0.875rem' }}>
                         {icon.name}
@@ -719,11 +719,11 @@ function App() {
           <div style={{ marginTop: '3rem' }}>
             <h2>不同尺寸</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-              <DirectSvgIcon icon={icons[0]} width={16} height={16} />
-              <DirectSvgIcon icon={icons[0]} width={24} height={24} />
-              <DirectSvgIcon icon={icons[0]} width={32} height={32} />
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} />
-              <DirectSvgIcon icon={icons[0]} width={64} height={64} />
+              <Icon icon={icons[0]} size={16} />
+              <Icon icon={icons[0]} size={24} />
+              <Icon icon={icons[0]} size={32} />
+              <Icon icon={icons[0]} size={48} />
+              <Icon icon={icons[0]} size={64} />
             </div>
           </div>
 
@@ -733,11 +733,11 @@ function App() {
               注意：只有使用 currentColor 或没有硬编码颜色的图标才能改变颜色
             </p>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} style={{ color: '#1976d2' }} removeColors={true} />
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} style={{ color: '#388e3c' }} removeColors={true} />
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} style={{ color: '#d32f2f' }} removeColors={true} />
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} style={{ color: '#f57c00' }} removeColors={true} />
-              <DirectSvgIcon icon={icons[0]} width={48} height={48} style={{ color: '#7b1fa2' }} removeColors={true} />
+              <Icon icon={icons[0]} size={48} color="#1976d2" />
+              <Icon icon={icons[0]} size={48} color="#388e3c" />
+              <Icon icon={icons[0]} size={48} color="#d32f2f" />
+              <Icon icon={icons[0]} size={48} color="#f57c00" />
+              <Icon icon={icons[0]} size={48} color="#7b1fa2" />
             </div>
           </div>
 
@@ -760,7 +760,7 @@ function App() {
                     fontSize: '1rem',
                   }}
                 >
-                  <DirectSvgIcon icon={icon} width={20} height={20} />
+                  <Icon icon={icon} size={20} />
                   <span>{icon.name}</span>
                 </button>
               ))}
