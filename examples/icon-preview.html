@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GD 图标预览</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .icon-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .icon-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    .icon-display {
+      margin-bottom: 20px;
+    }
+
+    .icon-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .icon-code {
+      background: #f5f5f5;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #666;
+      display: inline-block;
+    }
+
+    .size-demo {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 40px;
+    }
+
+    .size-demo h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .size-label {
+      min-width: 80px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .color-demo {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .color-demo h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .color-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .color-item {
+      text-align: center;
+    }
+
+    .color-name {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    svg {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 GD 图标集预览</h1>
+
+    <!-- 图标网格 -->
+    <div class="icon-grid">
+      <div class="icon-card">
+        <div class="icon-display">
+          <svg width="64" height="64" viewBox="0 0 24 24">
+            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.93-7-5.43-7-10V8.3l7-3.5 7 3.5V10c0 4.57-3.14 9.07-7 10z" fill="currentColor"/>
+            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="icon-name">Logo</div>
+        <code class="icon-code">gd:logo</code>
+      </div>
+
+      <div class="icon-card">
+        <div class="icon-display">
+          <svg width="64" height="64" viewBox="0 0 24 24">
+            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="icon-name">菜单</div>
+        <code class="icon-code">gd:menu</code>
+      </div>
+
+      <div class="icon-card">
+        <div class="icon-display">
+          <svg width="64" height="64" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="icon-name">首页</div>
+        <code class="icon-code">gd:home</code>
+      </div>
+
+      <div class="icon-card">
+        <div class="icon-display">
+          <svg width="64" height="64" viewBox="0 0 24 24">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="icon-name">搜索</div>
+        <code class="icon-code">gd:search</code>
+      </div>
+    </div>
+
+    <!-- 尺寸演示 -->
+    <div class="size-demo">
+      <h2>📏 不同尺寸</h2>
+      <div class="size-row">
+        <span class="size-label">16px</span>
+        <svg width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.93-7-5.43-7-10V8.3l7-3.5 7 3.5V10c0 4.57-3.14 9.07-7 10z" fill="currentColor"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="size-row">
+        <span class="size-label">24px</span>
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.93-7-5.43-7-10V8.3l7-3.5 7 3.5V10c0 4.57-3.14 9.07-7 10z" fill="currentColor"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="size-row">
+        <span class="size-label">32px</span>
+        <svg width="32" height="32" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.93-7-5.43-7-10V8.3l7-3.5 7 3.5V10c0 4.57-3.14 9.07-7 10z" fill="currentColor"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="size-row">
+        <span class="size-label">48px</span>
+        <svg width="48" height="48" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18c-3.86-.93-7-5.43-7-10V8.3l7-3.5 7 3.5V10c0 4.57-3.14 9.07-7 10z" fill="currentColor"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 颜色演示 -->
+    <div class="color-demo">
+      <h2>🎨 不同颜色</h2>
+      <div class="color-row">
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #1976d2;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">蓝色</div>
+        </div>
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #388e3c;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">绿色</div>
+        </div>
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #d32f2f;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">红色</div>
+        </div>
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #f57c00;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">橙色</div>
+        </div>
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #7b1fa2;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">紫色</div>
+        </div>
+        <div class="color-item">
+          <svg width="48" height="48" viewBox="0 0 24 24" style="color: #455a64;">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="currentColor"/>
+          </svg>
+          <div class="color-name">灰色</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

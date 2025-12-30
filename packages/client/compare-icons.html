@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图标对比</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+    .icon-box {
+      border: 2px solid #ddd;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .icon-box h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .icon-display {
+      background: #f9f9f9;
+      padding: 40px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .code-block {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      text-align: left;
+    }
+    .highlight {
+      background: yellow;
+      padding: 2px 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔔 图标对比分析</h1>
+    
+    <div class="comparison">
+      <div class="icon-box">
+        <h3>当前同步的图标</h3>
+        <div class="icon-display">
+          <svg width="96" height="96" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path stroke="#18181b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 9h4l-4 4h4"/>
+            <path stroke="#18181b" stroke-linecap="round" stroke-width="1.5" d="M7.5 19c.655 1.748 2.422 3 4.5 3q.367 0 .72-.05M16.5 19a4.5 4.5 0 0 1-1.302 1.84M9.107 2.674A6.5 6.5 0 0 1 12 2c3.727 0 6.75 3.136 6.75 7.005v.705a4.4 4.4 0 0 0 .692 2.375l1.108 1.724c1.011 1.575.239 3.716-1.52 4.214a25.8 25.8 0 0 1-14.06 0c-1.759-.498-2.531-2.639-1.52-4.213l1.108-1.725A4.4 4.4 0 0 0 5.25 9.71v-.705c0-1.074.233-2.092.65-3.002"/>
+          </svg>
+        </div>
+        <p><strong>包含内容：</strong></p>
+        <ul style="text-align: left;">
+          <li>✅ 铃铛轮廓</li>
+          <li>❌ Z 字形状（不需要的）</li>
+          <li>✅ 底部铃铛摆动线条</li>
+        </ul>
+        <div class="code-block">
+          <strong>第一个路径（Z 字）：</strong><br>
+          <span class="highlight">M10 9h4l-4 4h4</span><br><br>
+          这就是你看到的 Z 字形状！
+        </div>
+      </div>
+      
+      <div class="icon-box">
+        <h3>你想要的图标（图 2）</h3>
+        <div class="icon-display">
+          <svg width="96" height="96" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 简单的铃铛轮廓示例 -->
+            <path stroke="#18181b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path stroke="#18181b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <p><strong>应该包含：</strong></p>
+        <ul style="text-align: left;">
+          <li>✅ 铃铛轮廓</li>
+          <li>✅ 底部铃铛摆动线条</li>
+          <li>❌ 没有 Z 字</li>
+        </ul>
+        <div class="code-block">
+          <strong>应该只有铃铛的路径</strong><br>
+          没有 Z 字形状的路径数据
+        </div>
+      </div>
+    </div>
+
+    <h2>问题分析</h2>
+    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
+      <h3>🔍 根本原因</h3>
+      <p>Figma 中的实例 <code>1:4</code> (icon-bell-off) 包含了 Z 字形状的矢量路径。</p>
+      <p>这不是填充色的问题，而是<strong>图标的形状本身就包含了 Z 字</strong>。</p>
+    </div>
+
+    <h2>解决方案</h2>
+    <div style="background: #d1ecf1; padding: 20px; border-radius: 8px; border-left: 4px solid #0dcaf0; margin-top: 20px;">
+      <h3>✅ 在 Figma 中操作</h3>
+      <ol style="text-align: left;">
+        <li><strong>找到实例</strong> - 在 Figma 中找到名为 "icon-bell-off" 的实例</li>
+        <li><strong>检查内容</strong> - 确认它是否包含 Z 字形状</li>
+        <li><strong>删除 Z 字</strong> - 如果有，删除 Z 字形状的图层</li>
+        <li><strong>或者重新创建</strong> - 从正确的组件定义创建新实例</li>
+        <li><strong>重新同步</strong> - 运行 <code>bash quick-sync.sh</code></li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG 上传测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+    }
+    .upload-area {
+      border: 2px dashed #ddd;
+      padding: 40px;
+      text-align: center;
+      border-radius: 8px;
+      margin: 20px 0;
+      cursor: pointer;
+    }
+    .upload-area:hover {
+      border-color: #4CAF50;
+      background: #f9f9f9;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 30px 0;
+    }
+    .preview-box {
+      border: 2px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .preview-box h3 {
+      margin-top: 0;
+    }
+    .svg-display {
+      background: #f9f9f9;
+      padding: 30px;
+      margin: 15px 0;
+      border-radius: 4px;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .code-display {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+    .success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 SVG 上传调试工具</h1>
+    <p>上传你的 SVG 文件，查看原始内容和解析后的结果对比</p>
+
+    <div class="upload-area" id="uploadArea">
+      <p>📁 点击或拖拽 SVG 文件到这里</p>
+      <input type="file" id="fileInput" accept=".svg" style="display: none;">
+    </div>
+
+    <div id="result" style="display: none;">
+      <div class="comparison">
+        <div class="preview-box">
+          <h3>原始 SVG</h3>
+          <div class="svg-display" id="originalPreview"></div>
+          <h4>原始代码:</h4>
+          <div class="code-display" id="originalCode"></div>
+        </div>
+
+        <div class="preview-box">
+          <h3>上传到 API 后</h3>
+          <div class="svg-display" id="parsedPreview"></div>
+          <h4>解析后的代码:</h4>
+          <div class="code-display" id="parsedCode"></div>
+        </div>
+      </div>
+
+      <div>
+        <button onclick="uploadToAPI()">上传到 API (gd:test-svg)</button>
+        <button onclick="reset()">重置</button>
+      </div>
+
+      <div id="message"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentSVG = null;
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#4CAF50';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = '#ddd';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#ddd';
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'image/svg+xml') {
+        handleFile(file);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    });
+
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentSVG = e.target.result;
+        displayOriginal(currentSVG);
+        document.getElementById('result').style.display = 'block';
+      };
+      reader.readAsText(file);
+    }
+
+    function displayOriginal(svgContent) {
+      // Display original SVG
+      document.getElementById('originalPreview').innerHTML = svgContent;
+      document.getElementById('originalCode').textContent = svgContent;
+    }
+
+    async function uploadToAPI() {
+      if (!currentSVG) return;
+
+      const messageDiv = document.getElementById('message');
+      messageDiv.innerHTML = '<p>上传中...</p>';
+
+      try {
+        // Upload to API
+        const response = await fetch('http://localhost:3000/api/icons/gd/test-svg', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'dev-api-key-12345'
+          },
+          body: JSON.stringify({ svg: currentSVG })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+
+        const result = await response.json();
+        messageDiv.innerHTML = '<div class="success">✓ 上传成功！</div>';
+
+        // Fetch the parsed result
+        const iconResponse = await fetch('http://localhost:3000/gd.json');
+        const iconData = await iconResponse.json();
+        const parsedIcon = iconData.icons['test-svg'];
+
+        if (parsedIcon) {
+          // Display parsed result
+          const parsedSVG = `<svg width="${parsedIcon.width || 24}" height="${parsedIcon.height || 24}" viewBox="0 0 ${parsedIcon.width || 24} ${parsedIcon.height || 24}" xmlns="http://www.w3.org/2000/svg">${parsedIcon.body}</svg>`;
+          document.getElementById('parsedPreview').innerHTML = parsedSVG;
+          document.getElementById('parsedCode').textContent = JSON.stringify(parsedIcon, null, 2);
+        }
+      } catch (error) {
+        messageDiv.innerHTML = `<div class="error">✗ 错误: ${error.message}</div>`;
+      }
+    }
+
+    function reset() {
+      currentSVG = null;
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('message').innerHTML = '';
+      fileInput.value = '';
+    }
+  </script>
+</body>
+</html>
