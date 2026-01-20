@@ -1,5 +1,6 @@
 import { IconData, IconSet, Version } from '../types/icon.js';
 import { SVGParser } from '../parsers/SVGParser.js';
+import { IStorageLayer } from '../storage/StorageFactory.js';
 import { StorageLayer } from '../storage/StorageLayer.js';
 import { ConflictError } from '../types/errors.js';
 import logger from '../utils/logger.js';
@@ -10,9 +11,9 @@ import logger from '../utils/logger.js';
  */
 export class IconSetManager {
   private svgParser: SVGParser;
-  private storage: StorageLayer;
+  private storage: IStorageLayer;
 
-  constructor(storage?: StorageLayer, svgParser?: SVGParser) {
+  constructor(storage?: IStorageLayer, svgParser?: SVGParser) {
     this.storage = storage || new StorageLayer();
     this.svgParser = svgParser || new SVGParser();
   }

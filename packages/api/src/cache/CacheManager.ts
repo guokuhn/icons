@@ -85,9 +85,10 @@ export class CacheManager {
   /**
    * Get HTTP cache headers for a namespace
    * @param namespace Icon set namespace
+   * @param isDevelopment Whether running in development mode
    * @returns Cache headers object
    */
-  getCacheHeaders(namespace: string): CacheHeaders {
+  getCacheHeaders(namespace: string, isDevelopment: boolean = false): CacheHeaders {
     const iconSet = this.getCachedIconSet(namespace);
     
     // Generate ETag based on icon set content
@@ -97,8 +98,13 @@ export class CacheManager {
     const lastModified = iconSet?.lastModified || Date.now();
     const lastModifiedDate = new Date(lastModified);
     
+    // In development mode, disable caching to ensure fresh data
+    const cacheControl = isDevelopment 
+      ? 'no-cache, no-store, must-revalidate'
+      : `public, max-age=${this.ttl}, immutable`;
+    
     return {
-      'Cache-Control': `public, max-age=${this.ttl}, immutable`,
+      'Cache-Control': cacheControl,
       'ETag': etag,
       'Last-Modified': lastModifiedDate.toUTCString(),
     };

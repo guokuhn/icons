@@ -24,6 +24,9 @@ export function configureIconify() {
   // This ensures we always get fresh data from the API server
   if (import.meta.env.DEV) {
     disableCache('all');
+    disableCache('local');
+    disableCache('session');
+    console.log('🚫 All caches disabled in development mode');
   }
   
   console.log('✅ Iconify configured to use custom API server');

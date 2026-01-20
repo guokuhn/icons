@@ -57,6 +57,39 @@ cp packages/api/.env.example packages/api/.env
 
 Edit the `.env` file to configure your settings.
 
+#### Storage Configuration
+
+The API supports two storage backends:
+
+**1. Redis Storage (Recommended for Production)**
+
+Redis provides superior performance and scalability:
+- 10-100x faster than filesystem
+- Better concurrency handling
+- No impact on build/deployment time
+- Easier horizontal scaling
+
+```env
+STORAGE_TYPE=redis
+REDIS_URL=redis://localhost:6379
+```
+
+**2. Filesystem Storage (Simple Setup)**
+
+Store icons as JSON files on disk:
+
+```env
+STORAGE_TYPE=filesystem
+ICON_STORAGE_PATH=./icons
+```
+
+📖 **详细说明**: 查看 [Redis Storage Guide](./packages/api/REDIS_STORAGE.md) 了解：
+- Redis 安装和配置
+- 数据结构设计
+- 性能优化
+- 监控和故障排除
+- 生产部署建议
+
 #### CORS Configuration
 
 The API server supports Cross-Origin Resource Sharing (CORS) to allow client applications from different domains to access the icon API. Proper CORS configuration is essential for security and functionality.

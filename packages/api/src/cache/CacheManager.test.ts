@@ -142,15 +142,15 @@ describe('CacheManager', () => {
 
   describe('getCacheHeaders', () => {
     it('should return cache headers with correct structure', () => {
-      const headers = cacheManager.getCacheHeaders('gd');
+      const headers = cacheManager.getCacheHeaders('gd', false);
 
       expect(headers).toHaveProperty('Cache-Control');
       expect(headers).toHaveProperty('ETag');
       expect(headers).toHaveProperty('Last-Modified');
     });
 
-    it('should include max-age of at least 3600 seconds', () => {
-      const headers = cacheManager.getCacheHeaders('gd');
+    it('should include max-age in production mode', () => {
+      const headers = cacheManager.getCacheHeaders('gd', false);
       
       expect(headers['Cache-Control']).toContain('max-age=');
       
@@ -162,15 +162,23 @@ describe('CacheManager', () => {
       expect(maxAge).toBeGreaterThanOrEqual(3600);
     });
 
-    it('should include public and immutable directives', () => {
-      const headers = cacheManager.getCacheHeaders('gd');
+    it('should include public and immutable directives in production mode', () => {
+      const headers = cacheManager.getCacheHeaders('gd', false);
       
       expect(headers['Cache-Control']).toContain('public');
       expect(headers['Cache-Control']).toContain('immutable');
     });
 
+    it('should disable cache in development mode', () => {
+      const headers = cacheManager.getCacheHeaders('gd', true);
+      
+      expect(headers['Cache-Control']).toBe('no-cache, no-store, must-revalidate');
+      expect(headers['Cache-Control']).not.toContain('max-age');
+      expect(headers['Cache-Control']).not.toContain('immutable');
+    });
+
     it('should generate valid Last-Modified date', () => {
-      const headers = cacheManager.getCacheHeaders('gd');
+      const headers = cacheManager.getCacheHeaders('gd', false);
       
       const lastModified = new Date(headers['Last-Modified']);
       expect(lastModified.toString()).not.toBe('Invalid Date');
@@ -186,7 +194,7 @@ describe('CacheManager', () => {
       };
 
       cacheManager.cacheIconSet('gd', iconSet);
-      const headers = cacheManager.getCacheHeaders('gd');
+      const headers = cacheManager.getCacheHeaders('gd', false);
 
       const lastModified = new Date(headers['Last-Modified']);
       expect(lastModified.getTime()).toBe(specificTime);
@@ -204,10 +212,10 @@ describe('CacheManager', () => {
       };
 
       cacheManager.cacheIconSet('gd', iconSet1);
-      const headers1 = cacheManager.getCacheHeaders('gd');
+      const headers1 = cacheManager.getCacheHeaders('gd', false);
 
       cacheManager.cacheIconSet('gd', iconSet2);
-      const headers2 = cacheManager.getCacheHeaders('gd');
+      const headers2 = cacheManager.getCacheHeaders('gd', false);
 
       expect(headers1['ETag']).not.toBe(headers2['ETag']);
     });
@@ -247,9 +255,9 @@ describe('CacheManager', () => {
   });
 
   describe('TTL configuration', () => {
-    it('should use default TTL of 24 hours', () => {
+    it('should use default TTL of 24 hours in production mode', () => {
       const defaultManager = new CacheManager();
-      const headers = defaultManager.getCacheHeaders('gd');
+      const headers = defaultManager.getCacheHeaders('gd', false);
       
       const maxAgeMatch = headers['Cache-Control'].match(/max-age=(\d+)/);
       const maxAge = parseInt(maxAgeMatch![1], 10);
@@ -257,10 +265,10 @@ describe('CacheManager', () => {
       expect(maxAge).toBe(86400); // 24 hours in seconds
     });
 
-    it('should use custom TTL when provided', () => {
+    it('should use custom TTL when provided in production mode', () => {
       const customTTL = 7200; // 2 hours
       const customManager = new CacheManager(customTTL);
-      const headers = customManager.getCacheHeaders('gd');
+      const headers = customManager.getCacheHeaders('gd', false);
       
       const maxAgeMatch = headers['Cache-Control'].match(/max-age=(\d+)/);
       const maxAge = parseInt(maxAgeMatch![1], 10);

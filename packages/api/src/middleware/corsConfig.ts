@@ -160,9 +160,16 @@ export class CorsConfigManager {
   getCorsMiddlewareConfig(config: CorsConfig): CorsOptions {
     return {
       origin: (origin, callback) => {
-        if (this.isOriginAllowed(origin, config)) {
+        const allowed = this.isOriginAllowed(origin, config);
+        
+        if (allowed) {
           callback(null, true);
         } else {
+          // Log rejected CORS request for debugging
+          logger.debug('CORS request rejected', {
+            origin: origin || 'none',
+            allowedOrigins: config.allowAll ? ['*'] : config.origins,
+          });
           callback(new Error('Not allowed by CORS'), false);
         }
       },

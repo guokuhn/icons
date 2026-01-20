@@ -119,7 +119,10 @@ function App() {
   const loadIcons = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/gd.json');
+      // Add cache-busting parameter in development mode
+      const cacheBuster = import.meta.env.DEV ? `?_t=${Date.now()}` : '';
+      console.log('cacheBuster:', cacheBuster);
+      const response = await fetch(`http://localhost:3000/gd.json${cacheBuster}`);
       if (!response.ok) {
         throw new Error('Failed to fetch icons');
       }
@@ -217,7 +220,7 @@ function App() {
       const result = await response.json();
       if (response.ok) {
         console.log('✅ Cache cleared:', result.message);
-        // Reload icons after clearing cache
+        // Reload icons after clearing cache with cache-busting parameter
         await loadIcons();
       }
     } catch (err) {

@@ -12,15 +12,17 @@ import { readRateLimiter, writeRateLimiter } from './middleware/rateLimiter.js';
 import { ValidationError, NotFoundError, PayloadTooLargeError } from './types/errors.js';
 import { FigmaIntegrator } from './integrations/FigmaIntegrator.js';
 import { CorsConfigManager } from './middleware/corsConfig.js';
+import { createStorageLayer, getStorageType } from './storage/StorageFactory.js';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const IS_DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
-// Initialize managers
-const iconSetManager = new IconSetManager();
+// Initialize storage layer (will be set in async initialization)
+let iconSetManager: IconSetManager;
 const cacheManager = new CacheManager();
 
 // Initialize and configure CORS
@@ -137,7 +139,7 @@ app.get('/collections', readRateLimiter, asyncHandler(async (req: Request, res: 
   }
   
   // Get cache headers
-  const cacheHeaders = cacheManager.getCacheHeaders(namespace);
+  const cacheHeaders = cacheManager.getCacheHeaders(namespace, IS_DEVELOPMENT);
   
   // Check for conditional request
   const clientETag = req.headers['if-none-match'];
@@ -181,7 +183,7 @@ app.get('/collection', readRateLimiter, asyncHandler(async (req: Request, res: R
   }
   
   // Get cache headers
-  const cacheHeaders = cacheManager.getCacheHeaders(prefix);
+  const cacheHeaders = cacheManager.getCacheHeaders(prefix, IS_DEVELOPMENT);
   
   // Check for conditional request
   const clientETag = req.headers['if-none-match'];
@@ -261,7 +263,7 @@ app.get('/icons', readRateLimiter, asyncHandler(async (req: Request, res: Respon
   
   // Get cache headers (use first namespace for headers)
   const firstNamespace = Object.keys(iconsByNamespace)[0];
-  const cacheHeaders = cacheManager.getCacheHeaders(firstNamespace);
+  const cacheHeaders = cacheManager.getCacheHeaders(firstNamespace, IS_DEVELOPMENT);
   
   // Check for conditional request
   const clientETag = req.headers['if-none-match'];
@@ -297,7 +299,7 @@ app.get('/:namespace.json', readRateLimiter, asyncHandler(async (req: Request, r
   }
   
   // Get cache headers
-  const cacheHeaders = cacheManager.getCacheHeaders(namespace);
+  const cacheHeaders = cacheManager.getCacheHeaders(namespace, IS_DEVELOPMENT);
   
   // Check for conditional request
   const clientETag = req.headers['if-none-match'];
@@ -383,34 +385,28 @@ app.post('/api/upload', writeRateLimiter, authenticateApiKey, upload.single('ico
     throw new ValidationError('Invalid SVG file. File must contain valid SVG content');
   }
 
-  try {
-    // Add icon using IconSetManager (this will parse and validate the SVG)
-    await iconSetManager.addIcon(namespace, iconName, svgContent, { conflictStrategy });
+  await iconSetManager.addIcon(namespace, iconName, svgContent, { conflictStrategy });
 
-    // Invalidate cache for this namespace
-    cacheManager.invalidateCache(namespace);
+  // Invalidate cache for this namespace
+  cacheManager.invalidateCache(namespace);
 
-    logger.info(`Icon uploaded successfully via API`, {
+  logger.info(`Icon uploaded successfully via API`, {
+    namespace,
+    iconName,
+    fileSize: req.file.size,
+    conflictStrategy,
+  });
+
+  // Return success response
+  res.status(201).json({
+    success: true,
+    message: 'Icon uploaded successfully',
+    data: {
       namespace,
-      iconName,
-      fileSize: req.file.size,
-      conflictStrategy,
-    });
-
-    // Return success response
-    res.status(201).json({
-      success: true,
-      message: 'Icon uploaded successfully',
-      data: {
-        namespace,
-        name: iconName,
-        size: req.file.size,
-      },
-    });
-  } catch (error) {
-    // If it's an SVG parsing error, it will be caught by the error handler
-    throw error;
-  }
+      name: iconName,
+      size: req.file.size,
+    },
+  });
 }));
 
 // DELETE /api/icons/:namespace/:name - Delete an icon
@@ -673,14 +669,42 @@ app.use(notFoundHandler);
 // Global error handler - must be last
 app.use(errorHandler);
 
-// Start server only if not in test mode
+// Async initialization function
+async function initializeServer() {
+  try {
+    // Initialize storage layer
+    const storage = await createStorageLayer();
+    iconSetManager = new IconSetManager(storage);
+    
+    const storageType = getStorageType();
+    logger.info(`Icon set manager initialized with ${storageType} storage`);
+    
+    // Start server only if not in test mode
+    if (process.env.NODE_ENV !== 'test') {
+      app.listen(PORT, () => {
+        logger.info(`Iconify API server running on port ${PORT}`, {
+          port: PORT,
+          environment: process.env.NODE_ENV || 'development',
+          storageType,
+        });
+      });
+    }
+  } catch (error) {
+    const err = error as Error;
+    logger.error('Failed to initialize server', { error: err.message });
+    process.exit(1);
+  }
+}
+
+// Initialize and start server
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    logger.info(`Iconify API server running on port ${PORT}`, {
-      port: PORT,
-      environment: process.env.NODE_ENV || 'development',
-    });
-  });
+  initializeServer();
+} else {
+  // For tests, initialize synchronously with default storage
+  (async () => {
+    const storage = await createStorageLayer();
+    iconSetManager = new IconSetManager(storage);
+  })();
 }
 
 export default app;
